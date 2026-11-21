@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ARMANO V4 — Transparent Product Cutout Visual QA Contact Sheet</title>
+  <style>
+    :root {
+      --bg-ivory: #F7F4EF;
+      --bg-green: #10352C;
+      --bg-white: #FFFFFF;
+      --gold: #C5A059;
+      --charcoal: #121316;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0F1215;
+      color: #E6E8EB;
+      padding: 32px 20px;
+    }
+    .header {
+      max-width: 1440px;
+      margin: 0 auto 36px auto;
+      border-bottom: 1px solid #2A3038;
+      padding-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: #10352C;
+      color: #C5A059;
+      border: 1px solid #C5A059;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #8C96A5;
+      line-height: 1.5;
+    }
+    .summary-bar {
+      display: flex;
+      gap: 16px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .metric {
+      background: #181C22;
+      border: 1px solid #2A3038;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .metric strong { color: #C5A059; font-size: 15px; }
+    .grid {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .card {
+      background: #161A20;
+      border: 1px solid #262D36;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .card-header {
+      padding: 14px 20px;
+      background: #1A1F26;
+      border-bottom: 1px solid #262D36;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sku-pill {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 14px;
+      color: #10352C;
+      background: #C5A059;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+    .prod-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+    .status-pill {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+    .status-pass { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; }
+    .status-review { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid #eab308; }
+    .status-fail { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; }
+
+    .panels {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      padding: 16px 20px;
+    }
+    @media (max-width: 1024px) {
+      .panels { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .panels { grid-template-columns: 1fr; }
+    }
+    .panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .panel-label {
+      font-family: monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #8C96A5;
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+    .preview-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 12px;
+    }
+    .bg-checker {
+      background-image: linear-gradient(45deg, #2b3038 25%, transparent 25%),
+                        linear-gradient(-45deg, #2b3038 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #2b3038 75%),
+                        linear-gradient(-45deg, transparent 75%, #2b3038 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-color: #1a1e24;
+    }
+    .bg-ivory { background-color: #F7F4EF; }
+    .bg-green { background-color: #10352C; }
+    .bg-white { background-color: #FFFFFF; }
+    .bg-orig { background-color: #242930; }
+
+    .notes {
+      padding: 12px 20px;
+      background: #12151B;
+      border-top: 1px solid #262D36;
+      font-size: 12px;
+      color: #9AA5B4;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .notes strong { color: #E6E8EB; }
+    .defect-tag {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 10px;
+      background: #2D1A1A;
+      color: #F87171;
+      border: 1px solid #7F1D1D;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+    .verified-tag {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 10px;
+      background: #142E1F;
+      color: #4ADE80;
+      border: 1px solid #166534;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="badge">Official Visual QA Contact Sheet</div>
+    <h1>ARMANO V4 — Transparent Product Cutout & Edge Fidelity Audit</h1>
+    <p class="subtitle">
+      Compositing inspection of 17 studio packshot cutouts across 4 backgrounds: Alpha Checkerboard, Warm Ivory (#F7F4EF), Forest Green (#10352C), and Pure White (#FFFFFF), beside the original reference photograph.
+    </p>
+    <div class="summary-bar">
+      <div class="metric">Master Catalogue SKUs: <strong>13 Products</strong></div>
+      <div class="metric">Cutouts Evaluated: <strong>17 Assets</strong></div>
+      <div class="metric">PASS (Ready for Catalogue): <strong style="color: #4ade80;">10 Assets</strong></div>
+      <div class="metric">REVIEW (Manual Masking Required): <strong style="color: #facc15;">5 Assets</strong></div>
+      <div class="metric">FAIL (Retain Original Photo): <strong style="color: #f87171;">2 Assets</strong></div>
+    </div>
+  </header>
+
+  <main class="grid">
+
+    <article class="card" id="card-AR-001">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-001</span>
+          <span class="prod-name">Classic Zip-Top Rectangular Cosmetic Pouch</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 5.png" alt="AR-001 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-001.png" alt="AR-001 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-001.png" alt="AR-001 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-001.png" alt="AR-001 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-001.png" alt="AR-001 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 5.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-001.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Clean isolation of white PU, pink curved, and fuchsia nylon pouches. Handles and top zippers intact. Zero color halo on warm ivory and forest green.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-002">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-002</span>
+          <span class="prod-name">Two-Tone Contrast Base Vanity Pouch (Studio)</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 27.png" alt="AR-002 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-002.png" alt="AR-002 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-002.png" alt="AR-002 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-002.png" alt="AR-002 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-002.png" alt="AR-002 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 27.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-002.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Studio packshot on pure white sweep. Flawless two-tone boundary between ivory upper and terracotta base. Gold zip glide preserved with no fringe.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-002-velvet">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-002-velvet</span>
+          <span class="prod-name">Black Velvet Evening Gala Clutch</span>
+        </div>
+        <span class="status-pill status-review">REVIEW</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 23.png" alt="AR-002-velvet Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-002-velvet.png" alt="AR-002-velvet Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-002-velvet.png" alt="AR-002-velvet Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-002-velvet.png" alt="AR-002-velvet Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-002-velvet.png" alt="AR-002-velvet Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 23.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-002-velvet.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="defect-tag">HALO NOTICE</span> Black velvet evening clutch has gold glitter center. Lower edge near tassel exhibits subtle mantle stone reflection. Recommended for manual micro-brushing on tassel pull before public zoom deployment.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-003">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-003</span>
+          <span class="prod-name">Box-Gusset Travel Toiletry Organizer</span>
+        </div>
+        <span class="status-pill status-review">REVIEW</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 18.png" alt="AR-003 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-003.png" alt="AR-003 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-003.png" alt="AR-003 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-003.png" alt="AR-003 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-003.png" alt="AR-003 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 18.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-003.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="defect-tag">STAGE SHADOW</span> Multi-item kit (pink pouches + black tablet sleeve). Wood tabletop background removed successfully; however, the contact shadow beneath the tablet sleeve shows slight edge attenuation. Recommended for subtle ambient contact shadow pass.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-004">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-004</span>
+          <span class="prod-name">Rounded Corner Dome Cosmetic Case</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy.png" alt="AR-004 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-004.png" alt="AR-004 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-004.png" alt="AR-004 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-004.png" alt="AR-004 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-004.png" alt="AR-004 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-004.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Quilted deep red velvet dome case. Rounded perimeter piping and top horizontal zip track cleanly preserved. Zero red fringing on light or dark backdrops.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-005">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-005</span>
+          <span class="prod-name">Cylinder Barrel Pouch Pair</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 3.png" alt="AR-005 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-005.png" alt="AR-005 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-005.png" alt="AR-005 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-005.png" alt="AR-005 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-005.png" alt="AR-005 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 3.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-005.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Cylindrical barrel pouches pair. Pink sweep background completely decontaminated. Crossgrain texture, round side discs, and perimeter piping 100% sharp.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-006">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-006</span>
+          <span class="prod-name">Compact Trapezoid Bow Makeup Bag</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 2.png" alt="AR-006 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-006.png" alt="AR-006 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-006.png" alt="AR-006 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-006.png" alt="AR-006 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-006.png" alt="AR-006 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 2.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-006.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Champagne gold bow-front satin pouch. Factory ambient floor background cleanly clipped. Delicate bow folds and soft satin sheen preserved without edge erosion.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-007">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-007</span>
+          <span class="prod-name">Textured Woven Fabric Daily Pouch</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 7.png" alt="AR-007 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-007.png" alt="AR-007 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-007.png" alt="AR-007 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-007.png" alt="AR-007 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-007.png" alt="AR-007 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 7.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-007.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Textured woven cord pouch. Tactile chevron ribbing and brass zip puller preserved with zero fringe on both forest green and pure white.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-008">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-008</span>
+          <span class="prod-name">Professional Ballistic Brush Belt Organizer</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 16.png" alt="AR-008 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-008.png" alt="AR-008 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-008.png" alt="AR-008 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-008.png" alt="AR-008 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-008.png" alt="AR-008 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 16.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-008.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Professional ballistic brush belt organizer. Peach sweep background 100% decontaminated. All multi-tier brush slots, bristles, and webbing waist strap razor-sharp.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-009">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-009</span>
+          <span class="prod-name">Quilted Grid Puffer Volume Pouch (3D Anchor)</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 19.png" alt="AR-009 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-009.png" alt="AR-009 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-009.png" alt="AR-009 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-009.png" alt="AR-009 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-009.png" alt="AR-009 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 19.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-009.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">FLAGSHIP PASS</span> Quilted grid puffer volume pouch (anchor for 3D hero). Chunky tonal zipper, nylon loft, and stitch grid perfectly preserved. Zero white or grey halo.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-010">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-010</span>
+          <span class="prod-name">Camel Teddy Fleece Train Case (Face)</span>
+        </div>
+        <span class="status-pill status-review">REVIEW</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 30.png" alt="AR-010 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-010.png" alt="AR-010 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-010.png" alt="AR-010 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-010.png" alt="AR-010 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-010.png" alt="AR-010 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 30.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-010.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="defect-tag">FLEECE FIBRES</span> Camel teddy fleece front face. Box silhouette and blank OEM patch are clean; however, ultra-fine teddy fleece micro-fibres on the top curve show subtle smoothing. Suitable for catalogue grid; review before high-zoom macro deployment.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-010-side">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-010-side</span>
+          <span class="prod-name">Camel Teddy Fleece Train Case (Side Profile)</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 31.png" alt="AR-010-side Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-010-side.png" alt="AR-010-side Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-010-side.png" alt="AR-010-side Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-010-side.png" alt="AR-010-side Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-010-side.png" alt="AR-010-side Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 31.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-010-side.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Side profile showcasing chunky brass zipper teeth and structured gusset depth. Dramatic contrast with zero halo.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-011">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-011</span>
+          <span class="prod-name">Wristlet Strap Zip Clutch / Shopper Tote</span>
+        </div>
+        <span class="status-pill status-review">REVIEW / IDENTITY NOTE</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 11.png" alt="AR-011 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-011.png" alt="AR-011 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-011.png" alt="AR-011 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-011.png" alt="AR-011 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-011.png" alt="AR-011 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 11.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-011.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="defect-tag">IDENTITY AUDIT</span> Cutout quality is clean with handles and base intact. However, forensic SKU inspection confirms the image depicts a structured shopper tote bag with shoulder straps, while the PDF heading assigns AR-011 under POUCHES (Wristlet Zip Clutch). See Governance Section for resolution.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-012">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-012</span>
+          <span class="prod-name">Clear Transparent PVC Window Travel Kit</span>
+        </div>
+        <span class="status-pill status-fail">FAIL — RETAIN ORIGINAL</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 12.png" alt="AR-012 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-012.png" alt="AR-012 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-012.png" alt="AR-012 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-012.png" alt="AR-012 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-012.png" alt="AR-012 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 12.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-012.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="defect-tag">CLEAR PVC WINDOW</span> Product features a high-clarity transparent PVC front window. Flood-fill background removal removes the office desk seen through the window, but also removes the subtle glossy vinyl specular highlight. MUST RETAIN ORIGINAL PHOTO until dedicated alpha-composited PVC glass mask is applied.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-013">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-013</span>
+          <span class="prod-name">Sculptural Novelty Heart Pouch (Studio Master)</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 29.png" alt="AR-013 Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-013.png" alt="AR-013 Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-013.png" alt="AR-013 Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-013.png" alt="AR-013 Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-013.png" alt="AR-013 Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 29.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-013.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">FLAGSHIP PASS</span> Sculptural red chevron heart vanity pouch. White sweep background cleanly removed. Unique heart curvature, zip slider, and embossed chevron lines 100% pristine.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-AR-013-workbench">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">AR-013-workbench</span>
+          <span class="prod-name">Novelty Heart Pouch (Assembly Workbench Staging)</span>
+        </div>
+        <span class="status-pill status-fail">FAIL (CONTEXTUAL ONLY)</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 32.png" alt="AR-013-workbench Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/AR-013-workbench.png" alt="AR-013-workbench Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/AR-013-workbench.png" alt="AR-013-workbench Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/AR-013-workbench.png" alt="AR-013-workbench Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/AR-013-workbench.png" alt="AR-013-workbench Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 32.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/AR-013-workbench.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="defect-tag">STAGING CONTEXT</span> Pink heart pouch on factory assembly workbench. The artisan workbench, cutting mat, and tools provide authentic manufacturing storytelling. Removing the background destroys its documentary value. MUST RETAIN AS AUTHENTIC CONTEXTUAL PHOTOGRAPHY.</div>
+      </div>
+    </article>
+
+    <article class="card" id="card-sample-channel-puffer">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="sku-pill">sample-channel-puffer</span>
+          <span class="prod-name">Electric Orange Vertical Channel Puffer Bag</span>
+        </div>
+        <span class="status-pill status-pass">PASS</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="panel-label">1. Original Photo</span>
+          <div class="preview-box bg-orig">
+            <img src="/reference/product-images/image copy 20.png" alt="sample-channel-puffer Original" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">2. Alpha Checkerboard</span>
+          <div class="preview-box bg-checker">
+            <img src="/images/products/cutouts/sample-channel-puffer.png" alt="sample-channel-puffer Checkerboard" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">3. Warm Ivory (#F7F4EF)</span>
+          <div class="preview-box bg-ivory">
+            <img src="/images/products/cutouts/sample-channel-puffer.png" alt="sample-channel-puffer Warm Ivory" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">4. Forest Green (#10352C)</span>
+          <div class="preview-box bg-green">
+            <img src="/images/products/cutouts/sample-channel-puffer.png" alt="sample-channel-puffer Forest Green" loading="lazy" />
+          </div>
+        </div>
+        <div class="panel">
+          <span class="panel-label">5. Pure White (#FFFFFF)</span>
+          <div class="preview-box bg-white">
+            <img src="/images/products/cutouts/sample-channel-puffer.png" alt="sample-channel-puffer Pure White" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        <div><strong>Source Packshot:</strong> <code>reference/product-images/image copy 20.png</code> | <strong>Cutout Master:</strong> <code>public/images/products/cutouts/sample-channel-puffer.png</code></div>
+        <div><strong>Quality Analysis:</strong> <span class="verified-tag">VERIFIED</span> Electric orange channel puffer bag. Lofted vertical cushion channels and tonal zip cleanly separated from studio grey sweep with zero fringe.</div>
+      </div>
+    </article>
+
+  </main>
+</body>
+</html>

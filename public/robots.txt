@@ -1,0 +1,6 @@
+# ARMANO B2B Flagship Crawler Directives
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://www.armanobags.com/sitemap.xml

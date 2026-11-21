@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARMANO V4.1 — Cutout Failure Remediation & Forensic Inspection</title>
+  <style>
+    :root {
+      --ivory: #F7F4EF;
+      --green: #10352C;
+      --dark: #121110;
+      --gold: #D4AF37;
+      --coral: #E86C5A;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--dark);
+      color: var(--ivory);
+      line-height: 1.5;
+      padding: 32px 24px;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 32px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(232, 108, 90, 0.2);
+      color: var(--coral);
+      border: 1px solid rgba(232, 108, 90, 0.4);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    p.lead {
+      color: #A89F91;
+      font-size: 15px;
+      max-width: 900px;
+    }
+    .action-notice {
+      background: rgba(212, 175, 55, 0.08);
+      border-left: 3px solid var(--gold);
+      padding: 16px;
+      margin: 20px 0 32px;
+      border-radius: 0 4px 4px 0;
+      font-size: 14px;
+      color: #DCD6CC;
+    }
+    .action-notice strong { color: var(--gold); }
+    .grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      gap: 32px;
+    }
+    .card {
+      background: #181716;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .card-subtitle {
+      font-size: 13px;
+      color: #A89F91;
+    }
+    .status-tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(232, 108, 90, 0.2);
+      color: var(--coral);
+      border: 1px solid var(--coral);
+    }
+    .defect-box {
+      background: rgba(232, 108, 90, 0.1);
+      border: 1px dashed rgba(232, 108, 90, 0.4);
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #FFABA0;
+      margin-bottom: 20px;
+    }
+    .comparison-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1100px) {
+      .comparison-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    .pane {
+      background: #1F1D1C;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .pane-title {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 10px;
+      background: #252321;
+      color: #A89F91;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pane-img-wrap {
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .pane-img-wrap img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    .surface-checker {
+      background-image: 
+        linear-gradient(45deg, #222 25%, transparent 25%), 
+        linear-gradient(-45deg, #222 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #222 75%), 
+        linear-gradient(-45deg, transparent 75%, #222 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      background-color: #333;
+    }
+    .surface-ivory { background-color: #F7F4EF; }
+    .surface-green { background-color: #10352C; }
+    .surface-white { background-color: #FFFFFF; }
+    .surface-neutral { background-color: #2A2826; }
+    .caption {
+      font-size: 11px;
+      padding: 6px 10px;
+      color: #8C8478;
+      background: #181716;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <span class="badge">V4.1 Critical Quality Remediation</span>
+    <h1>Forensic Cutout Audit &amp; Remediation Portal</h1>
+    <p class="lead">
+      Independent multi-surface evaluation of rejected product cutouts. The previous color-distance / flood-fill engine has been retired. Authentic client photographs have been safely restored across the storefront while a production-grade local AI / manual vector masking workflow is established.
+    </p>
+
+    <div class="action-notice">
+      <strong>Active Governance Enforcement:</strong>
+      All defective cutouts have been detached from <code style="color:var(--gold);">src/data/products.js</code>. The public website now delivers 100% authentic, high-resolution original client photographs from <code style="color:var(--gold);">public../../public/images/products/*.png</code>.
+    </div>
+  </header>
+
+  <main class="grid">
+
+    <!-- AR-001 -->
+    <article class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">AR-001 — Classic Zip-Top Rectangular Cosmetic Pouch (3-Piece Trio)</h2>
+          <div class="card-subtitle">Source: reference/product-images/image copy 5.png | Native: 1600 × 1200 px</div>
+        </div>
+        <span class="status-tag">REJECTED (FAIL)</span>
+      </div>
+      <div class="defect-box">
+        <strong>Forensic Defect Report:</strong> Simplistic flood-fill failed across wooden tabletop textures and background drapery. Left severe jagged boundary artifacts, retained wood grain between pouches, and fragmented the three-piece group composition.
+      </div>
+      <div class="comparison-row">
+        <div class="pane">
+          <div class="pane-title">1. Authentic Original Photo</div>
+          <div class="pane-img-wrap surface-neutral">
+            <img src="../../public/images/products/AR-001.png" alt="AR-001 Original">
+          </div>
+          <div class="caption">Storefront Status: RESTORED</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">2. Rejected Cutout (Alpha)</div>
+          <div class="pane-img-wrap surface-checker">
+            <img src="cutouts/AR-001.png" alt="AR-001 Cutout">
+          </div>
+          <div class="caption">Checkerboard exposes jagged holes</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">3. Warm Ivory #F7F4EF</div>
+          <div class="pane-img-wrap surface-ivory">
+            <img src="cutouts/AR-001.png" alt="AR-001 Ivory">
+          </div>
+          <div class="caption">Retained wood edge bleed</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">4. Forest Green #10352C</div>
+          <div class="pane-img-wrap surface-green">
+            <img src="cutouts/AR-001.png" alt="AR-001 Green">
+          </div>
+          <div class="caption">Dark field exposes severe white/wood halos</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">5. Pure White #FFFFFF</div>
+          <div class="pane-img-wrap surface-white">
+            <img src="cutouts/AR-001.png" alt="AR-001 White">
+          </div>
+          <div class="caption">Fragmented base lines</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- AR-002 Velvet -->
+    <article class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">sample-velvet-clutch — Black Velvet Evening Gala Clutch</h2>
+          <div class="card-subtitle">Source: reference/product-images/image copy 23.png | Native: 749 × 989 px</div>
+        </div>
+        <span class="status-tag">REJECTED (FAIL)</span>
+      </div>
+      <div class="defect-box">
+        <strong>Forensic Defect Report:</strong> Complex ornate mantle staging (gold mirror frame, bright window, marble tabletop) overwhelmed the flood-fill algorithm. Caused background remnants on the lower border, broken table horizons, and clipped tassel elements.
+      </div>
+      <div class="comparison-row">
+        <div class="pane">
+          <div class="pane-title">1. Authentic Original Photo</div>
+          <div class="pane-img-wrap surface-neutral">
+            <img src="../../public/images/products/AR-002-gold.png" alt="Velvet Clutch Original">
+          </div>
+          <div class="caption">Storefront Status: RESTORED</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">2. Rejected Cutout (Alpha)</div>
+          <div class="pane-img-wrap surface-checker">
+            <img src="cutouts/AR-002-velvet.png" alt="Velvet Clutch Cutout">
+          </div>
+          <div class="caption">Fragmented bottom border</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">3. Warm Ivory #F7F4EF</div>
+          <div class="pane-img-wrap surface-ivory">
+            <img src="cutouts/AR-002-velvet.png" alt="Velvet Clutch Ivory">
+          </div>
+          <div class="caption">Floating appearance</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">4. Forest Green #10352C</div>
+          <div class="pane-img-wrap surface-green">
+            <img src="cutouts/AR-002-velvet.png" alt="Velvet Clutch Green">
+          </div>
+          <div class="caption">Exposes mirror / window artifacts</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">5. Pure White #FFFFFF</div>
+          <div class="pane-img-wrap surface-white">
+            <img src="cutouts/AR-002-velvet.png" alt="Velvet Clutch White">
+          </div>
+          <div class="caption">Irregular perimeter erosion</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- AR-008 Brush Belt -->
+    <article class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">sample-brush-belt (AR-008) — Professional Ballistic Brush Belt Organizer</h2>
+          <div class="card-subtitle">Source: reference/product-images/image copy 16.png | Native: 1280 × 1134 px</div>
+        </div>
+        <span class="status-tag">REJECTED (FAIL)</span>
+      </div>
+      <div class="defect-box">
+        <strong>Forensic Defect Report:</strong> Prominent 2–4 pixel pink halo (#FBDED6) along black leatherette straps, loops, and bristle tips due to lack of edge color decontamination. Gaps inside closed strap loops were not reached by exterior flood fill, remaining solid pink.
+      </div>
+      <div class="comparison-row">
+        <div class="pane">
+          <div class="pane-title">1. Authentic Original Photo</div>
+          <div class="pane-img-wrap surface-neutral">
+            <img src="../../public/images/products/AR-008.png" alt="Brush Belt Original">
+          </div>
+          <div class="caption">Storefront Status: RESTORED</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">2. Rejected Cutout (Alpha)</div>
+          <div class="pane-img-wrap surface-checker">
+            <img src="cutouts/AR-008.png" alt="Brush Belt Cutout">
+          </div>
+          <div class="caption">Closed loop gaps unextracted</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">3. Warm Ivory #F7F4EF</div>
+          <div class="pane-img-wrap surface-ivory">
+            <img src="cutouts/AR-008.png" alt="Brush Belt Ivory">
+          </div>
+          <div class="caption">Pink fringe visible against ivory</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">4. Forest Green #10352C</div>
+          <div class="pane-img-wrap surface-green">
+            <img src="cutouts/AR-008.png" alt="Brush Belt Green">
+          </div>
+          <div class="caption">Severe glowing pink outline defect</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">5. Pure White #FFFFFF</div>
+          <div class="pane-img-wrap surface-white">
+            <img src="cutouts/AR-008.png" alt="Brush Belt White">
+          </div>
+          <div class="caption">Pink hue bleed along perimeter</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- AR-011 Pink Tote -->
+    <article class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">sample-tote (AR-011) — Pastel Blush Shopper Tote Bag</h2>
+          <div class="card-subtitle">Source: reference/product-images/image copy 11.png | Native: 1600 × 1200 px</div>
+        </div>
+        <span class="status-tag">REJECTED (FAIL)</span>
+      </div>
+      <div class="defect-box">
+        <strong>Forensic Defect Report:</strong> Tone-on-tone conflict between blush pink product leatherette and warm ambient studio backdrop. Color distance algorithm ate into bag body seams while leaving gray table remnants below the base.
+      </div>
+      <div class="comparison-row">
+        <div class="pane">
+          <div class="pane-title">1. Authentic Original Photo</div>
+          <div class="pane-img-wrap surface-neutral">
+            <img src="../../public/images/products/AR-011.png" alt="Pink Tote Original">
+          </div>
+          <div class="caption">Storefront Status: RESTORED</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">2. Rejected Cutout (Alpha)</div>
+          <div class="pane-img-wrap surface-checker">
+            <img src="cutouts/AR-011.png" alt="Pink Tote Cutout">
+          </div>
+          <div class="caption">Tone-on-tone erosion on seams</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">3. Warm Ivory #F7F4EF</div>
+          <div class="pane-img-wrap surface-ivory">
+            <img src="cutouts/AR-011.png" alt="Pink Tote Ivory">
+          </div>
+          <div class="caption">Table shadow remnants at base</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">4. Forest Green #10352C</div>
+          <div class="pane-img-wrap surface-green">
+            <img src="cutouts/AR-011.png" alt="Pink Tote Green">
+          </div>
+          <div class="caption">Irregular fringing around handles</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">5. Pure White #FFFFFF</div>
+          <div class="pane-img-wrap surface-white">
+            <img src="cutouts/AR-011.png" alt="Pink Tote White">
+          </div>
+          <div class="caption">Ragged lower horizon line</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- AR-012 Clear PVC -->
+    <article class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">AR-012 — Clear Transparent PVC Window Travel Kit</h2>
+          <div class="card-subtitle">Source: reference/product-images/image copy 12.png | Native: 1599 × 899 px</div>
+        </div>
+        <span class="status-tag">REJECTED (FAIL)</span>
+      </div>
+      <div class="defect-box">
+        <strong>Forensic Defect Report:</strong> Algorithm treated the transparent PVC vinyl window as background and cleared it, destroying natural plastic reflections, specular sheen, and surface refraction. Result looked like an empty frame with no glass/window.
+      </div>
+      <div class="comparison-row">
+        <div class="pane">
+          <div class="pane-title">1. Authentic Original Photo</div>
+          <div class="pane-img-wrap surface-neutral">
+            <img src="../../public/images/products/AR-012.png" alt="PVC Pouch Original">
+          </div>
+          <div class="caption">Storefront Status: RESTORED</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">2. Rejected Cutout (Alpha)</div>
+          <div class="pane-img-wrap surface-checker">
+            <img src="cutouts/AR-012.png" alt="PVC Pouch Cutout">
+          </div>
+          <div class="caption">Window rendered as empty hole</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">3. Warm Ivory #F7F4EF</div>
+          <div class="pane-img-wrap surface-ivory">
+            <img src="cutouts/AR-012.png" alt="PVC Pouch Ivory">
+          </div>
+          <div class="caption">Loss of realistic plastic material</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">4. Forest Green #10352C</div>
+          <div class="pane-img-wrap surface-green">
+            <img src="cutouts/AR-012.png" alt="PVC Pouch Green">
+          </div>
+          <div class="caption">Unnatural high contrast inside frame</div>
+        </div>
+        <div class="pane">
+          <div class="pane-title">5. Pure White #FFFFFF</div>
+          <div class="pane-img-wrap surface-white">
+            <img src="cutouts/AR-012.png" alt="PVC Pouch White">
+          </div>
+          <div class="caption">Zero specular highlights</div>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+</body>
+</html>
+

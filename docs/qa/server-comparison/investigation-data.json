@@ -1,0 +1,126 @@
+{
+  "res3000": {
+    "port": 3000,
+    "label": "PORT 3000 (DEV / ONEDRIVE)",
+    "desktop": {
+      "eyebrowText": "Mumbai Contract Atelier",
+      "canvasMounted": true,
+      "canvasRect": {},
+      "canvasDisplay": "block",
+      "canvasVisibility": "visible",
+      "canvasOpacity": "1",
+      "rightColRect": {},
+      "webglContext": {
+        "type": "webgl2",
+        "isContextLost": false,
+        "drawingBufferWidth": 654,
+        "drawingBufferHeight": 570,
+        "preserveDrawingBuffer": false
+      },
+      "r3fState": null
+    },
+    "mobile": {
+      "eyebrowText": "Mumbai Contract Atelier",
+      "canvasMounted": true,
+      "canvasRect": {},
+      "swatchRect": {},
+      "swatchOverlapPouch": false,
+      "hasHorizontalOverflow": false,
+      "r3fState": null
+    },
+    "printToPdfBehavior": {
+      "generated": true,
+      "sizeBytes": 12250148,
+      "note": "PDF generated via browser print pipeline"
+    }
+  },
+  "res3099": {
+    "port": 3099,
+    "label": "PORT 3099 (PROD / ARMANO_BUILD)",
+    "desktop": {
+      "eyebrowText": "Mumbai Contract Atelier",
+      "canvasMounted": true,
+      "canvasRect": {},
+      "canvasDisplay": "block",
+      "canvasVisibility": "visible",
+      "canvasOpacity": "1",
+      "rightColRect": {},
+      "webglContext": {
+        "type": "webgl2",
+        "isContextLost": false,
+        "drawingBufferWidth": 654,
+        "drawingBufferHeight": 570,
+        "preserveDrawingBuffer": false
+      },
+      "r3fState": null
+    },
+    "mobile": {
+      "eyebrowText": "Mumbai Contract Atelier",
+      "canvasMounted": true,
+      "canvasRect": {},
+      "swatchRect": {},
+      "swatchOverlapPouch": false,
+      "hasHorizontalOverflow": false,
+      "r3fState": null
+    },
+    "printToPdfBehavior": {
+      "generated": true,
+      "sizeBytes": 12289880,
+      "note": "PDF generated via browser print pipeline"
+    }
+  },
+  "consoleLogs": {
+    "3000": [
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+      },
+      {
+        "type": "log",
+        "text": "[HMR] connected"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+      },
+      {
+        "type": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+      },
+      {
+        "type": "log",
+        "text": "[HMR] connected"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+      }
+    ],
+    "3099": [
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+      }
+    ]
+  }
+}
