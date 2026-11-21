@@ -8,6 +8,8 @@ const nextConfig = {
   },
   experimental: {
     agentUpgrade: 'security',
+    cpus: 1,
+    workerThreads: false,
   },
   async rewrites() {
     const backendUrl = process.env.SERVER_API_URL || 'http://localhost:5000';

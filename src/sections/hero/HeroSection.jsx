@@ -41,14 +41,12 @@ const Hero3DCanvas = dynamic(
 );
 
 /**
- * ARMANO V6.3 — Restored Right-Side 3D Hero with Cinematic Parallax & Scroll Depth
- * High-Fashion European Luxury Packaging Atelier:
- * - Restored 42% Left / 58% Right split layout (Visual center at ~72% viewport width).
- * - Zero overlap between 3D product and headline/CTAs.
- * - Borderless transparent WebGL canvas floating directly in studio tone.
- * - Interactive mouse parallax and proximity zoom (scale 0.98 -> 1.045) on desktop.
- * - Controlled scroll depth effect receding the product gracefully into the studio floor.
- * - Mobile layout with centered lower product zone and accessible conversion buttons.
+ * ARMANO V8.7 — Refined Luxury Hero
+ * - Compact, intentional mobile vertical rhythm: zero dead gaps.
+ * - Perfectly balanced editorial typography with [text-wrap:balance], zero orphan words.
+ * - Seamless 3D studio pouch stage centered in viewport.
+ * - High-fashion desktop 50/50 split layout.
+ * - Pill-shaped action buttons in optimal thumb reach zone.
  */
 export function HeroSection() {
   const [activeTheme, setActiveTheme] = useState(HERO_THEMES[0]);
@@ -69,37 +67,39 @@ export function HeroSection() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // 1. Initial Cinematic Entrance Timeline
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      // 1. Initial Cinematic Entrance Timeline (Desktop only >= 1024 for immediate mobile LCP)
+      if (window.innerWidth >= 1024) {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      tl.fromTo(
-        leftColRef.current?.querySelector('.hero-eyebrow'),
-        { opacity: 0, y: 14 },
-        { opacity: 1, y: 0, duration: 0.7, delay: 0.08 }
-      )
-        .fromTo(
-          headingRef.current,
-          { opacity: 0, y: 26 },
-          { opacity: 1, y: 0, duration: 0.9 },
-          '-=0.45'
-        )
-        .fromTo(
-          textRef.current,
-          { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, duration: 0.75 },
-          '-=0.55'
-        );
-
-      if (ctaGroupRef.current && window.innerWidth >= 1024) {
         tl.fromTo(
-          ctaGroupRef.current,
+          leftColRef.current?.querySelector('.hero-eyebrow'),
           { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.65 },
-          '-=0.45'
-        );
+          { opacity: 1, y: 0, duration: 0.7, delay: 0.08, clearProps: 'all' }
+        )
+          .fromTo(
+            headingRef.current,
+            { opacity: 0, y: 26 },
+            { opacity: 1, y: 0, duration: 0.85, clearProps: 'all' },
+            '-=0.45'
+          )
+          .fromTo(
+            textRef.current,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.7, clearProps: 'all' },
+            '-=0.55'
+          );
+
+        if (ctaGroupRef.current) {
+          tl.fromTo(
+            ctaGroupRef.current,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.65, clearProps: 'all' },
+            '-=0.45'
+          );
+        }
       }
 
-      // 2. Controlled Scroll Depth Effect (Product recedes deeper into background on scroll)
+      // 2. Controlled Scroll Depth Effect
       const mm = gsap.matchMedia();
       mm.add('(min-width: 1024px)', () => {
         gsap.to(rightColRef.current, {
@@ -155,7 +155,7 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-[90svh] lg:min-h-screen flex flex-col justify-center border-b overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
+      className="relative pt-3 pb-6 sm:py-8 lg:py-0 lg:min-h-screen flex flex-col justify-start lg:justify-center border-b overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
       style={{
         background: activeTheme.bgGradient,
         borderColor: activeTheme.borderMuted,
@@ -171,23 +171,23 @@ export function HeroSection() {
 
       {/* Subtle Studio Floor Atmosphere */}
       <div
-        className="absolute bottom-0 inset-x-0 h-32 pointer-events-none transition-opacity duration-1000"
+        className="absolute bottom-0 inset-x-0 h-24 sm:h-32 pointer-events-none transition-opacity duration-1000"
         style={{
           background: `linear-gradient(to top, ${activeTheme.bgPrimary} 0%, transparent 100%)`,
         }}
       />
 
-      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 lg:py-3.5 xl:py-8 relative z-10 flex-1 flex flex-col justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-1.5 sm:gap-4 lg:gap-8 items-center">
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3.5 xl:py-8 relative z-10 flex flex-col justify-start lg:justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-1.5 sm:gap-3 lg:gap-8 items-center">
           {/* Left Column: High-Fashion Editorial Typography & CTAs (6 Cols -> 50% Desktop Width) */}
           <div
             ref={leftColRef}
-            className="lg:col-span-6 flex flex-col text-center lg:text-left space-y-1.5 sm:space-y-3 lg:space-y-4"
+            className="lg:col-span-6 flex flex-col text-center lg:text-left space-y-1 sm:space-y-2.5 lg:space-y-4"
           >
             {/* Atelier Eyebrow */}
-            <div className="hero-eyebrow self-center lg:self-start">
+            <div className="hero-eyebrow self-center lg:self-start mb-0.5 sm:mb-1">
               <div
-                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-[10px] sm:text-xs font-mono tracking-widest uppercase shadow-2xs backdrop-blur-md transition-colors duration-700"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-[10px] sm:text-xs font-mono tracking-widest uppercase shadow-2xs backdrop-blur-md transition-colors duration-700"
                 style={{
                   backgroundColor: activeTheme.badgeBg,
                   borderColor: activeTheme.badgeBorder,
@@ -200,14 +200,14 @@ export function HeroSection() {
             </div>
 
             {/* Editorial Display Heading: Balanced 2-Line Composition */}
-            <div className="space-y-1 sm:space-y-2">
+            <div className="space-y-1 sm:space-y-1.5">
               <h1
                 ref={headingRef}
-                className="text-2xl xs:text-3xl sm:text-4xl lg:text-[2.65rem] xl:text-[3.45rem] font-serif font-normal leading-[1.08] tracking-tight transition-colors duration-700"
+                className="text-[1.85rem] xs:text-[2.15rem] sm:text-4xl lg:text-[2.65rem] xl:text-[3.45rem] font-serif font-normal leading-[1.12] tracking-tight transition-colors duration-700 [text-wrap:balance]"
                 style={{ color: activeTheme.textPrimary }}
               >
-                <span className="block whitespace-nowrap">Bags &amp; Pouches,</span>
-                <span className="block italic font-normal whitespace-nowrap">
+                <span className="block">Bags &amp; Pouches,</span>
+                <span className="block italic font-normal">
                   Made for Brands.
                 </span>
               </h1>
@@ -215,7 +215,7 @@ export function HeroSection() {
               {/* Supporting Editorial Paragraph */}
               <p
                 ref={textRef}
-                className="text-xs sm:text-sm lg:text-base font-sans font-light leading-relaxed max-w-sm sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 transition-colors duration-700"
+                className="text-xs sm:text-sm lg:text-base font-sans font-light leading-relaxed max-w-[310px] xs:max-w-[340px] sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 transition-colors duration-700 [text-wrap:balance]"
                 style={{ color: activeTheme.textSecondary }}
               >
                 Custom cosmetic pouches, carry-alls, and bespoke gifting packaging, engineered directly in Mumbai for beauty labels and retail brand programmes.
@@ -256,7 +256,7 @@ export function HeroSection() {
           {/* Right Column: Borderless 3D Studio Stage (6 Cols -> 50% Desktop Width, Visual Center ~75%) */}
           <div
             ref={rightColRef}
-            className="lg:col-span-6 relative flex flex-col items-center justify-center w-full min-w-0 bg-transparent"
+            className="lg:col-span-6 relative flex flex-col items-center justify-center w-full min-w-0 bg-transparent -mt-1 sm:mt-0"
             style={{ background: 'transparent' }}
           >
             <HeroErrorBoundary>
@@ -267,12 +267,12 @@ export function HeroSection() {
             </HeroErrorBoundary>
           </div>
 
-          {/* Mobile-Only Action CTAs (Directly Reachable Below 3D Stage & Swatches) */}
+          {/* Mobile-Only Action CTAs (Tightly Integrated in Thumb Zone Below Swatches) */}
           <div className="lg:hidden w-full pt-1.5 sm:pt-2">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 w-full max-w-xs sm:max-w-sm mx-auto">
+            <div className="flex flex-col gap-2 w-full max-w-[290px] xs:max-w-[320px] mx-auto">
               <Link
                 href="/contact#rfq"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xs transition-colors text-xs sm:text-sm font-medium tracking-wide shadow-sm"
+                className="h-10 px-5 rounded-full inline-flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-wider font-semibold shadow-xs transition-all active:scale-[0.98]"
                 style={{
                   backgroundColor: activeTheme.ctaPrimaryBg,
                   color: activeTheme.ctaPrimaryText,
@@ -284,7 +284,7 @@ export function HeroSection() {
 
               <Link
                 href="/products"
-                className="inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-xs border transition-colors text-xs font-medium tracking-wide"
+                className="h-9 px-5 rounded-full inline-flex items-center justify-center gap-1.5 border text-xs font-mono uppercase tracking-wider font-medium transition-all active:scale-[0.98]"
                 style={{
                   backgroundColor: activeTheme.ctaSecondaryBg,
                   borderColor: activeTheme.ctaSecondaryBorder,

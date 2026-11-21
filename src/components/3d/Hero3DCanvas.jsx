@@ -115,7 +115,7 @@ function StudioLighting({ theme }) {
 /**
  * Adaptive Aspect-Ratio Camera Controller
  * Guarantees zero clipping across desktop, tablet, and mobile portrait viewports.
- * Dynamically calculates camera distance to maintain 15-20% visual breathing room.
+ * Dynamically calculates camera distance to maintain optimal visual presence.
  */
 function AdaptiveCameraRig({ prefersReducedMotion }) {
   const isInitialized = useRef(false);
@@ -130,13 +130,13 @@ function AdaptiveCameraRig({ prefersReducedMotion }) {
     const isMobile = width < 640 || (typeof window !== 'undefined' && window.innerWidth < 1024);
 
     // If viewport aspect is narrow (portrait or split columns), scale distance gracefully so zero clipping occurs
-    const aspectFactor = aspect < 1.15 ? Math.min(1.28, 1.15 / Math.max(0.75, aspect)) : 1.0;
-    const baseZ = isMobile ? 4.35 : 4.6;
+    const aspectFactor = aspect < 1.15 ? Math.min(1.25, 1.15 / Math.max(0.75, aspect)) : 1.0;
+    const baseZ = isMobile ? 3.9 : 4.6;
     const targetZ = baseZ * aspectFactor;
-    const targetY = isMobile ? 0.04 : 0.08;
+    const targetY = isMobile ? 0.0 : 0.08;
 
     if (!isInitialized.current) {
-      state.camera.position.set(0, targetY + 0.15, targetZ + 0.25);
+      state.camera.position.set(0, targetY + 0.1, targetZ + 0.2);
       isInitialized.current = true;
     }
 
@@ -173,14 +173,14 @@ function InteractiveParallaxStage({ theme, prefersReducedMotion }) {
     const isMobile = state.size.width < 640 || (typeof window !== 'undefined' && window.innerWidth < 1024);
 
     if (isMobile) {
-      // On mobile: stable rest pose with 15% increased visual presence (scale 0.88) and vertical balance (y: 0.05)
+      // On mobile: stable rest pose with optimal visual presence (scale 0.94) and centered vertical balance
       // to guarantee full zipper bar, puller tab, side gussets, quilted body, and ground shadow are 100% visible
       const lerpSpeed = Math.min(1, delta * 3.0);
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, 0, lerpSpeed);
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, 0.05, lerpSpeed);
+      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, 0.0, lerpSpeed);
       groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, 0, lerpSpeed);
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0, lerpSpeed);
-      groupRef.current.scale.set(0.88, 0.88, 0.88);
+      groupRef.current.scale.set(0.94, 0.94, 0.94);
       return;
     }
 
@@ -302,6 +302,7 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
   );
   const containerRef = useRef(null);
   const [isInView, setIsInView] = useState(true);
+  const [is3DReady, setIs3DReady] = useState(false);
   const theme = activeTheme || HERO_THEMES[0];
 
   useEffect(() => {
@@ -324,7 +325,7 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
     >
       {/* Product Display Stage: Progressive 3D WebGL Studio with Resilient Photo Fallback */}
       <div
-        className="relative w-full h-[260px] xs:h-[290px] sm:h-[340px] md:h-[400px] lg:h-[min(430px,49vh)] xl:h-[550px] bg-transparent flex items-center justify-center overflow-visible"
+        className="relative w-full h-[180px] xs:h-[205px] sm:h-[270px] md:h-[350px] lg:h-[min(430px,49vh)] xl:h-[550px] bg-transparent flex items-center justify-center overflow-visible"
         style={{ background: 'transparent' }}
       >
         {webglSupported ? (
@@ -334,8 +335,15 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
               <HeroProductPhoto priority />
             </div>
 
+            {/* Instant Photographic Backdrop until 3D Canvas delivers first rendered frame */}
+            {!is3DReady && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-500 z-0 print:hidden">
+                <HeroProductPhoto priority />
+              </div>
+            )}
+
             {/* Interactive 3D WebGL Canvas */}
-            <div className="w-full h-full cursor-grab active:cursor-grabbing bg-transparent print:hidden flex items-center justify-center">
+            <div className="w-full h-full cursor-grab active:cursor-grabbing bg-transparent print:hidden flex items-center justify-center relative z-10">
               <CanvasErrorBoundary
                 fallback={
                   <HeroProductPhoto
@@ -376,6 +384,7 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
                 >
                   <AdaptiveCameraRig prefersReducedMotion={prefersReducedMotion} />
                   <StudioLighting theme={theme} />
+                  <ReadyNotifier onReady={() => setIs3DReady(true)} />
 
                   <Suspense fallback={null}>
                     <InteractiveParallaxStage
@@ -385,11 +394,11 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
 
                     {/* Seamless Soft Ground Contact Shadow */}
                     <ContactShadows
-                      position={[0, -0.98, 0]}
+                      position={[0, -0.88, 0]}
                       opacity={theme.shadowOpacity || 0.36}
-                      scale={7.5}
-                      blur={2.8}
-                      far={2.8}
+                      scale={6.8}
+                      blur={2.4}
+                      far={2.4}
                       color={theme.shadowColor || '#2B241C'}
                     />
                   </Suspense>
@@ -415,7 +424,7 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
 
       {/* Floating Swatch Controller & Concept Badging:
           Always visible, reachable, and interactive */}
-      <div className="w-[96%] max-w-xs sm:max-w-md mt-2 lg:mt-3 z-20 print:hidden">
+      <div className="w-full max-w-[290px] xs:max-w-[320px] sm:max-w-md mt-1 sm:mt-2 lg:mt-3 z-20 print:hidden">
         <div
           className="px-3.5 py-1.5 sm:py-2.5 rounded-full backdrop-blur-md border shadow-md flex items-center justify-between gap-2.5 transition-colors duration-700"
           style={{
@@ -486,7 +495,7 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
 
         {/* Transparent Concept Disclaimer Footnote */}
         <p
-          className="text-center text-[8.5px] sm:text-[10px] font-mono tracking-wide mt-1.5 sm:mt-2 transition-colors duration-700"
+          className="text-center text-[8px] xs:text-[8.5px] sm:text-[10px] font-mono tracking-wide mt-1 sm:mt-1.5 transition-colors duration-700"
           style={{ color: theme.textMuted }}
         >
           <Sparkles className="w-2.5 h-2.5 inline mr-1 text-[#C5A059]" />

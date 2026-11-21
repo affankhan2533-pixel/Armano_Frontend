@@ -3,7 +3,7 @@
 
 /**
  * Authentic ARMANO Master SKU AR-009 Cosmetic Pouch Photo Component
- * - Displays the authentic client photograph (/images/products/AR-009.png)
+ * - Displays the authentic client photograph (/images/products/AR-009-cutout.png)
  * - Uses direct static image element to avoid Next.js image proxy attachment headers
  * - Large, completely visible, uncropped with original proportions
  * - Seamless transparent blending with subtle natural contact shadow
@@ -13,11 +13,11 @@
 export function HeroProductPhoto({ priority = true, className = '' }) {
   return (
     <div
-      className={`relative w-full h-[280px] xs:h-[310px] sm:h-[350px] md:h-[420px] lg:h-[min(500px,58vh)] xl:h-[560px] flex flex-col items-center justify-center p-2 sm:p-4 select-none bg-transparent ${className}`}
+      className={`relative w-full h-[180px] xs:h-[205px] sm:h-[270px] md:h-[350px] lg:h-[min(500px,58vh)] xl:h-[560px] flex flex-col items-center justify-center p-1 sm:p-4 select-none bg-transparent ${className}`}
       style={{ background: 'transparent' }}
     >
       {/* Product Image Frame */}
-      <div className="relative w-full max-w-[340px] xs:max-w-[380px] sm:max-w-[440px] md:max-w-[500px] lg:max-w-[540px] xl:max-w-[580px] h-[240px] xs:h-[270px] sm:h-[310px] md:h-[380px] lg:h-[450px] xl:h-[490px] flex items-center justify-center">
+      <div className="relative w-full max-w-[270px] xs:max-w-[300px] sm:max-w-[380px] md:max-w-[460px] lg:max-w-[540px] xl:max-w-[580px] h-[160px] xs:h-[185px] sm:h-[240px] md:h-[320px] lg:h-[450px] xl:h-[490px] flex items-center justify-center">
         {/* Direct static transparent cutout image with 100% reliability across all browsers and PDF exports */}
         <img
           src="/images/products/AR-009-cutout.png"
@@ -32,7 +32,7 @@ export function HeroProductPhoto({ priority = true, className = '' }) {
 
         {/* Subtle realistic contact shadow underneath the pouch base */}
         <div
-          className="absolute -bottom-2 sm:-bottom-3 w-[72%] h-4 sm:h-6 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(35,28,20,0.20)_0%,transparent_70%)] blur-md pointer-events-none"
+          className="absolute -bottom-2 sm:-bottom-3 w-[72%] h-3 sm:h-6 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(35,28,20,0.20)_0%,transparent_70%)] blur-md pointer-events-none"
           aria-hidden="true"
         />
       </div>
