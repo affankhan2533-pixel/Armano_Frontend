@@ -6,6 +6,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { QuiltedPouchMesh } from './QuiltedPouchMesh';
+import { BlenderPouchModel, BLENDER_MODEL_PATH } from './BlenderPouchModel';
 import { HERO_THEMES } from '@/data/heroThemes';
 import { Check, Sparkles } from 'lucide-react';
 import { HeroProductPhoto } from '@/components/hero/HeroProductPhoto';
@@ -157,7 +158,7 @@ function AdaptiveCameraRig({ prefersReducedMotion }) {
  * - Smoothly damps back to rest pose when pointer leaves
  * - Disables parallax on touch/mobile and prefers-reduced-motion
  */
-function InteractiveParallaxStage({ theme, prefersReducedMotion }) {
+function InteractiveParallaxStage({ theme, prefersReducedMotion, useBlenderModel = false }) {
   const groupRef = useRef(null);
 
   useFrame((state, delta) => {
@@ -237,11 +238,29 @@ function InteractiveParallaxStage({ theme, prefersReducedMotion }) {
 
   return (
     <group ref={groupRef}>
-      <QuiltedPouchMesh
-        theme={theme}
-        color={theme.colorHex}
-        prefersReducedMotion={prefersReducedMotion}
-      />
+      {useBlenderModel ? (
+        <Suspense
+          fallback={
+            <QuiltedPouchMesh
+              theme={theme}
+              color={theme.colorHex}
+              prefersReducedMotion={prefersReducedMotion}
+            />
+          }
+        >
+          <BlenderPouchModel
+            theme={theme}
+            color={theme.colorHex}
+            prefersReducedMotion={prefersReducedMotion}
+          />
+        </Suspense>
+      ) : (
+        <QuiltedPouchMesh
+          theme={theme}
+          color={theme.colorHex}
+          prefersReducedMotion={prefersReducedMotion}
+        />
+      )}
     </group>
   );
 }
@@ -303,7 +322,26 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
   const containerRef = useRef(null);
   const [isInView, setIsInView] = useState(true);
   const [is3DReady, setIs3DReady] = useState(false);
+  const [useBlenderModel, setUseBlenderModel] = useState(false);
   const theme = activeTheme || HERO_THEMES[0];
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // Check if armano-pouch.glb is available in /models/
+    fetch(BLENDER_MODEL_PATH, { method: 'HEAD' })
+      .then((res) => {
+        if (res.ok && res.status === 200) {
+          const type = res.headers.get('content-type') || '';
+          const len = parseInt(res.headers.get('content-length') || '0', 10);
+          if (!type.includes('text/html') && (len > 1000 || type.includes('model') || type.includes('octet-stream'))) {
+            setUseBlenderModel(true);
+          }
+        }
+      })
+      .catch(() => {
+        setUseBlenderModel(false);
+      });
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current || typeof IntersectionObserver === 'undefined') return;
@@ -390,6 +428,7 @@ export function Hero3DCanvas({ activeTheme, onSelectTheme }) {
                     <InteractiveParallaxStage
                       theme={theme}
                       prefersReducedMotion={prefersReducedMotion}
+                      useBlenderModel={useBlenderModel}
                     />
 
                     {/* Seamless Soft Ground Contact Shadow */}
